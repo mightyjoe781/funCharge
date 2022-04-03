@@ -88,7 +88,7 @@ app.get ('/view/:country', function (req, res) {
             [req.params.country.toUpperCase()], function (err, row) {
 
             if (err) {
-                res.send ("error while displaying");
+                res.send ("[GET]: failed on /view/"+req.params.country);
                 return console.error (err.message);
             }
 
@@ -99,7 +99,7 @@ app.get ('/view/:country', function (req, res) {
             `AMBULANCE: ${row.AMBULANCE}, FIRE: ${row.FIRE}, ` +
             `CALL CODES: ${row.CALLCODES} \n`);
             */
-            console.log ("successs while displaying");
+            console.log ("[GET]: successful on /view/"+req.params.country);
         });
     });
 });
@@ -117,11 +117,13 @@ app.get ('/allhelp', function (req, res) {
             [], (err , rows) => {
 
             if (err) {
+                console.log ("[GET]: failed on /allhelp")
                 console.log (err.message);
 //### should this return or throw an error or what?
             }
 
             res.send(rows);
+            console.log ("[GET]: successful on /allhelp");
 
             /*
             // console.log (rows);

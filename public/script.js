@@ -60,7 +60,6 @@ function getNumber(i) {
       success: function(data) {
           console.log(data);
           if(data['COUNTRY']==null){
-            // console.log("null")
             msg = `<div class="ui info message" style="margin-top: 0.3vh;">
                       <div class="header">
                           Not Available for this region, please click somewhere else
@@ -68,58 +67,19 @@ function getNumber(i) {
                   Click <a href="https://www.adducation.info/general-knowledge-travel-and-transport/emergency-numbers/"><b>here</b></a> for countrywise list of emergency numbers
                   </div>`
           } else {
-            console.log("CONTROL REACHES TO ELSE");
-            // console.log(" not null");
-            msg = `<div class="ui six tiny horizontal statistics">
-                          <div class="statistic">
-                              <div class="value">
-                              ${emptlyValueNumbers(data["COUNTRY"])}
-                              </div>
-                              <div class="label">
-                              REGION
-                              </div>
-                          </div>
-                          <div class="statistic">
-                              <div class="value">
-                              ${emptlyValueNumbers(data["CALLCODES"])}
-                              </div>
-                              <div class="label">
-                              Call Codes
-                              </div>
-                          </div>
-                          <div class="statistic">
-                              <div class="value">
-                              ${emptlyValueNumbers(data["EMERGENCY"])}
-                              </div>
-                              <div class="label">
-                              Emergency
-                              </div>
-                          </div>
-                          <div class="statistic">
-                              <div class="value">
-                              ${emptlyValueNumbers(data["POLICE"])}
-                              </div>
-                              <div class="label">
-                              Police
-                              </div>
-                          </div>
-                          <div class="statistic">
-                              <div class="value">
-                              ${emptlyValueNumbers(data["AMBULANCE"])}
-                              </div>
-                              <div class="label">
-                              Ambulance
-                              </div>
-                          </div>
-                          <div class="statistic">
-                              <div class="value">
-                              ${emptlyValueNumbers(data["FIRE"])}
-                              </div>
-                              <div class="label">
-                              Fire
-                              </div>
-                          </div>
-                          </div>`;
+            var printer = ["COUNTRY","CALLCODES","EMERGENCY","POLICE","AMBULANCE","FIRE"];
+            msg = `<div class="ui six tiny horizontal statistics">`;
+            printer.forEach(field => {
+              msg = msg + `<div class="statistic">
+                  <div class="value">
+                  ${emptlyValueNumbers(data[field])}
+                  </div>
+                  <div class="label">
+                    ${field}
+                  </div>
+                </div>`
+            });
+            msg += `</div>`;
          }
       }
   });
