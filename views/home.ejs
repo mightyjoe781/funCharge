@@ -20,6 +20,9 @@
     <!-- HERE CSS STYLESHEETS -->
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
     <!-- semantic ui cdn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"
         integrity="sha512-dqw6X88iGgZlTsONxZK9ePmJEFrmHwpuMrsUChjAw1mRUhUITE5QU9pkcSox+ynfLhL15Sv2al5A0LVyDCmtUw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -33,13 +36,33 @@
 
     <div class="ui stackable internally celled grid">
         <div class="three wide column">
-            <p>Buttons go here!!</p>
+            <div class="ui raised segments">
+                <div class="ui segment">
+                    <p>Find recreational centers/charging stations near you</p>
+                    <button class="large ui button">
+                        Find near me
+                    </button>
+                </div>
+                <div class="ui segment">
+                    <p>Get route along with recreational centers/charging stations en route</p>
+                    <div class="ui vertical buttons">
+                        <button class="large ui button" onClick="markPosition()">
+                            Mark Positions
+                        </button>
+                        <button id="routeBtn" class="large ui disabled button">
+                            Route
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
         <div class="ten wide column">
             <div id="mapContainer"></div>
         </div>
         <div class="three wide column">
-            <div class="ui stacked segment">
+            <div class="ui raised segment">
                 <h2 class="ui dividing header">Location :</h2>
                 <div id="status">
                     <p>Click on map to get location info!!</p>
@@ -50,9 +73,88 @@
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Modal to get car info -->
+    <div id="routeInfoModal" class="ui modal">
+        <h1 class="ui header">Car info</h1>
+        <br>
+        <br>
+        <div class="ui centered container">
+            <!-- Car types -->
+            <div class="ui five column stackable relaxed grid">
+                <div class="column"></div>
+                <div id="hatchback" class="column" onClick="carSelect('hatchback')">
+                    <img class="ui centered image" src="./images/hatchback.webp">
+                    <h3 class="ui center aligned header">
+                        Hatchback
+                    </h3>
+                </div>
+                <div id="sedan" class="column" onClick="carSelect('sedan')">
+                    <img class="ui centered image" src="./images/sedan.webp">
+                    <h3 class="ui center aligned header">
+                        Sedan
+                    </h3>
+                </div>
+                <div id="SUV" class="column" onClick="carSelect('SUV')">
+                    <img class="ui centered image" src="./images/SUV.webp">
+                    <h3 class="ui center aligned header">
+                        SUV
+                    </h3>
+                </div>
 
+                <div class="column"></div>
+            </div>
+            <!-- Slider -->
+            <div class="ui relaxed grid">
+                <div class="row">
+                    <div class="two wide column"></div>
+                    <div class="twelve wide column">
+                        <input id="batteryValInp" type="range" value="50" min="0" max="100">
+                    </div>
+                    <div class="two wide column"></div>
+                </div>
+                <div class="row">
+                    <div class="two wide column"></div>
+                    <div class="twelve wide center aligned column">
+                        <div class="ui huge statistic">
+                            <div id="batteryVal" class="value">
+                            </div>
+                            <div class="label">
+                                Battery
+                            </div>
+                        </div>
+                    </div>
+                    <div class="two wide column"></div>
+                </div>
+                <div class="row">
+                    <div class="two wide column"></div>
+                    <div class="twelve wide right aligned column">
+                        <div class="ui secondary animated button">
+                            <div class="visible content">
+                                Submit
+                            </div>
+                            <div class="hidden content">
+                                <i class="paper plane icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="two wide column"></div>
+                </div>
+            </div>
+            <br>
+        </div>
     </div>
 </body>
+
+<script>
+    $('#routeBtn').click(() => {
+        $('#routeInfoModal')
+            // .modal('setting', 'closable', false)
+            .modal('setting', 'transition', 'drop')
+            .modal('show');
+        $('#routeBtn').addClass("disabled");
+    })
+</script>
 
 <!-- CUSTOM STYLESHEETS && SCRIPTS -->
 <link href="styles.css" rel="stylesheet" type="text/css">

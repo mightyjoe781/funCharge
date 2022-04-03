@@ -1,3 +1,4 @@
+
 //--------------------------------------------------------------------
 // File information.
 
@@ -69,6 +70,7 @@ function HandleResult (err, str_op_type) {
 
 //--------------------------------------------------------------------
 // HomePage
+
 app.get("/",function(req,res){
 	res.render("home.ejs");
 });
@@ -133,6 +135,7 @@ app.get ('/allhelp', function (req, res) {
 //--------------------------------------------------------------------
 // Fallback Request.
 
+
 app.get("*", (req,res) => {
     res.render("404.ejs");
 });
@@ -146,3 +149,4 @@ app.listen (port, hostname, function() {
 
 //--------------------------------------------------------------------
 // End of file.
+
