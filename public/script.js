@@ -2139,17 +2139,145 @@ slider.addEventListener('input', (event) => {
   batteryDisplay.innerHTML = slider.value
 });
 
+function globalFncTap(evt) {
+  var coord = map.screenToGeo(evt.currentPointer.viewportX,
+    evt.currentPointer.viewportY);
+  var lat = coord.lat.toFixed(4);
+  var lon = coord.lng.toFixed(4);
+  revGeocode(lat, lon);
+};
+
 // Listening to current map location:
 function ClickListener(map) {
   // Attach an event listener to map display
   // obtain the coordinates and display in an alert box.
-  map.addEventListener('tap', function (evt) {
-    var coord = map.screenToGeo(evt.currentPointer.viewportX,
-      evt.currentPointer.viewportY);
-    var lat = coord.lat.toFixed(4);
-    var lon = coord.lng.toFixed(4);
-    revGeocode(lat, lon);
-  });
+  map.addEventListener('tap', globalFncTap);
+  
 }
 
 ClickListener(map);
+
+var str = "not set";
+var end = "not set";
+
+function setUpClickListener(map) {
+  // Attach an event listener to map display
+  // obtain the coordinates and display in an alert box.
+
+  document.getElementById("status").innerHTML = "<h4>Select <b>START</b> and <b>END</b> points on the map</h4>";
+  var cnt = 0;
+  map.addEventListener('tap', fnc);
+  map.removeEventListener('tap', globalFncTap);
+  function fnc(evt) {
+    var coord = map.screenToGeo(evt.currentPointer.viewportX, evt.currentPointer.viewportY);
+    let Pos = { lat: coord.lat, lng: coord.lng };
+
+
+    var ans = Pos.lat + ',' + Pos.lng;
+    if (cnt == 0) {
+      document.getElementById("status").innerHTML = "<h4><b>START</b> point selected</h4>";
+      str = ans;
+      let strIcon = new H.map.Icon('assets/start.png');
+      let strMarker = new H.map.Marker(Pos, { icon: strIcon });
+      map.addObject(strMarker);
+      strMarker.setData("START for routing!");
+      console.log("START: " + ans);
+    }
+    if (cnt == 1) {
+      document.getElementById("status").innerHTML = "<h4><b>END</b> point selected</h4>";
+      end = ans;
+      let endIcon = new H.map.Icon('assets/end.png');
+      let endMarker = new H.map.Marker(Pos, { icon: endIcon });
+      map.addObject(endMarker);
+      endMarker.setData("END for routing!");
+      console.log("END: " + ans);
+    }
+
+    cnt++;
+    if (cnt == 2) {
+
+      map.removeEventListener('tap', fnc);
+      // alert("Use ROUTE button to trace your path on the map");
+      map.addEventListener('tap', globalFncTap);
+      $('#routeBtn').removeClass("disabled");
+      $('#markBtn').addClass("disabled");
+    }
+    //console.log('Clicked at ' + coord.lat.toFixed(4) +
+    // ((coord.lat > 0) ? 'N' : 'S') +
+    /// ' ' + coord.lng.toFixed(4) +
+    /// ((coord.lng > 0) ? 'E' : 'W'));
+  }
+
+}
+
+function clickToMark(){
+  // Add event listener:
+  map.addEventListener('longpress', function(evt) {
+      if(evt.target instanceof H.map.Marker){
+          //bubble
+          // Create an info bubble object at a specific geographic location:
+          var bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
+          content: evt.target.getData()
+   });
+          // Add info bubble to the UI:
+          ui.addBubble(bubble);
+      }
+      else{
+          // Log 'tap' and 'mouse' events:
+          var cnt =0;
+          console.log(evt); // too much data here (try to minify)
+          let pointer = evt.currentPointer;
+          let imgIcon = new H.map.Icon('assets/robot.png');
+          let pointerPoistion = map.screenToGeo(pointer.viewportX, pointer.viewportY);
+          let pointerMarker = new H.map.Marker(pointerPoistion,{icon: imgIcon, volatility: true});
+          pointerMarker.draggable = true;
+          if(cnt == 0){
+              var userData = prompt("Enter some data for this pointer:");
+              pointerMarker.setData(userData);
+              console.log("Pointer added!");
+          }else{
+              pointerMarker.getData();
+          }
+                 
+          map.addObject(pointerMarker);
+      }
+  });
+}
+
+clickToMark();
+
+function clickDragMarkers(){
+  // disable the default draggability of the underlying map
+  // and calculate the offset between mouse and target's position
+  // when starting to drag a marker object:
+  map.addEventListener('dragstart', function(ev) {
+      var target = ev.target,
+          pointer = ev.currentPointer;
+      if (target instanceof H.map.Marker) {
+      var targetPosition = map.geoToScreen(target.getGeometry());
+      target['offset'] = new H.math.Point(pointer.viewportX - targetPosition.x, pointer.viewportY - targetPosition.y);
+      behavior.disable();
+      }
+  }, false);
+  // re-enable the default draggability of the underlying map
+  // when dragging has completed
+  map.addEventListener('dragend', function(ev) {
+      var target = ev.target;
+      if (target instanceof H.map.Marker) {
+        
+          
+      behavior.enable();
+      }
+  }, false);
+  // Listen to the drag event and move the position of the marker
+  // as necessary
+  map.addEventListener('drag', function(ev) {
+      var target = ev.target,
+          pointer = ev.currentPointer;
+      if (target instanceof H.map.Marker) {
+      target.setGeometry(map.screenToGeo(pointer.viewportX - target['offset'].x, pointer.viewportY - target['offset'].y));
+      }
+  }, false);
+}
+
+clickDragMarkers();
