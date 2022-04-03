@@ -1,4 +1,3 @@
-
 //--------------------------------------------------------------------
 // File information.
 
@@ -22,7 +21,7 @@
 //--------------------------------------------------------------------
 // Overview.
 
-//### Explain CRUD here,
+//### Explain CRUD API here,
 
 //--------------------------------------------------------------------
 // Program parameters.
@@ -93,10 +92,13 @@ app.get ('/view/:country', function (req, res) {
                 return console.error (err.message);
             }
 
+            res.send(row);
+            /*
             res.send(`COUNTRY: ${row.COUNTRY}, ` +
             `EMERGENCY: ${row.EMERGENCY}, POLICE: ${row.POLICE}, ` +
             `AMBULANCE: ${row.AMBULANCE}, FIRE: ${row.FIRE}, ` +
             `CALL CODES: ${row.CALLCODES} \n`);
+            */
             console.log ("successs while displaying");
         });
     });
@@ -119,6 +121,9 @@ app.get ('/allhelp', function (req, res) {
 //### should this return or throw an error or what?
             }
 
+            res.send(rows);
+
+            /*
             // console.log (rows);
             rows.forEach ((row) => {
                 res.write(`COUNTRY: ${row.COUNTRY}, ` +
@@ -126,16 +131,14 @@ app.get ('/allhelp', function (req, res) {
                 `AMBULANCE: ${row.AMBULANCE}, FIRE: ${row.FIRE}, ` +
                 `CALL CODES: ${row.CALLCODES} \n`);
             })
-
             res.end();
+            */
         });
     });
 });
 
 //--------------------------------------------------------------------
 // Fallback Request.
-
-
 app.get("*", (req,res) => {
     res.render("404.ejs");
 });
@@ -149,4 +152,3 @@ app.listen (port, hostname, function() {
 
 //--------------------------------------------------------------------
 // End of file.
-
