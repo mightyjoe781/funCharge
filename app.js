@@ -27,10 +27,10 @@
 // Program parameters.
 
 var dbdir    = './database'                 ;
-var dbfile   = 'helpline.db'               ;
+var dbfile   = 'helpline.db'                ;
 var dbpath   = dbdir + '/' + dbfile         ;
 
-var port     = process.env.PORT || 31000    ;
+var port     = process.env.PORT || 3033     ;
 var hostname = '127.0.0.1'                  ;
 
 //--------------------------------------------------------------------
