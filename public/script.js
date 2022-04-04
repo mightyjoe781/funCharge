@@ -240,7 +240,7 @@ function setUpClickListener(map) {
       let strMarker = new H.map.Marker(Pos, { icon: strIcon });
       map.addObject(strMarker);
       strMarker.setData("START for routing!");
-      console.log("START: " + ans);
+      console.log("START: " + str);
     }
     if (cnt == 1) {
       document.getElementById("status").innerHTML = "<h4><b>END</b> point selected</h4>";
@@ -249,7 +249,7 @@ function setUpClickListener(map) {
       let endMarker = new H.map.Marker(Pos, { icon: endIcon });
       map.addObject(endMarker);
       endMarker.setData("END for routing!");
-      console.log("END: " + ans);
+      console.log("END: " + end);
     }
 
     cnt++;
@@ -364,7 +364,7 @@ function distance(lat1, lon1, lat2, lon2, unit) {
 }
 
 function route() {
-  $.getJSON('https://router.hereapi.com/v8/routes?departureTime=any&origin=52.533959,13.404780&ev[connectorTypes]=iec62196Type2Combo&transportMode=car&destination=51.741505,14.352413&return=polyline&ev[freeFlowSpeedTable]=0,0.239,27,0.239,45,0.259,60,0.196,75,0.207,90,0.238,100,0.26,110,0.296,120,0.337,130,0.351,250,0.351&ev[trafficSpeedTable]=0,0.349,27,0.319,45,0.329,60,0.266,75,0.287,90,0.318,100,0.33,110,0.335,120,0.35,130,0.36,250,0.36&ev[auxiliaryConsumption]=1.8&ev[ascent]=9&ev[descent]=4.3&ev[makeReachable]=true&ev[initialCharge]=48&ev[maxCharge]=80&ev[chargingCurve]=0,239,32,199,56,167,60,130,64,111,68,83,72,55,76,33,78,17,80,1&ev[maxChargeAfterChargingStation]=72&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U', function(data){
+  $.getJSON('https://router.hereapi.com/v8/routes?departureTime=any&origin='+str.split(',')[0]+','+str.split(',')[1]+'&ev[connectorTypes]=iec62196Type2Combo&transportMode=car&destination='+end.split(',')[0]+','+end.split(',')[1]+'&return=polyline&ev[freeFlowSpeedTable]=0,0.239,27,0.239,45,0.259,60,0.196,75,0.207,90,0.238,100,0.26,110,0.296,120,0.337,130,0.351,250,0.351&ev[trafficSpeedTable]=0,0.349,27,0.319,45,0.329,60,0.266,75,0.287,90,0.318,100,0.33,110,0.335,120,0.35,130,0.36,250,0.36&ev[auxiliaryConsumption]=1.8&ev[ascent]=9&ev[descent]=4.3&ev[makeReachable]=true&ev[initialCharge]=48&ev[maxCharge]=80&ev[chargingCurve]=0,239,32,199,56,167,60,130,64,111,68,83,72,55,76,33,78,17,80,1&ev[maxChargeAfterChargingStation]=72&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U', function(data){
     let sections = data["routes"][0]["sections"];
     let redChargeIcon = new H.map.Icon('assets/1.png'),
         greenChargeIcon = new H.map.Icon('assets/2.png'),
@@ -378,13 +378,30 @@ function route() {
       // Create a linestring to use as a point source for the route line
       let linestring = H.geo.LineString.fromFlexiblePolyline(sections[i]["polyline"]);
 
-      // Create a polyline to display the route:
+      colors = ["#9400D3","#f461c3","#8B4513","#000000"]
+      // Create an outline for the route polyline:
       let routeLine = new H.map.Polyline(linestring, {
-        style: { strokeColor: 'black', lineWidth: 3 }
+        style: {
+          lineWidth: 10,
+          strokeColor: colors[Math.floor(Math.random()*colors.length)],
+          lineTailCap: 'arrow-tail',
+          lineHeadCap: 'arrow-head'
+        }
       });
+      // Create a patterned polyline:
+      let routeArrows = new H.map.Polyline(linestring, {
+        style: {
+          lineWidth: 10,
+          fillColor: colors[Math.floor(Math.random()*colors.length)],
+          strokeColor: 'rgb(255, 255, 255)',
+          lineDash: [0, 2],
+          lineTailCap: 'arrow-tail',
+          lineHeadCap: 'arrow-head' }
+        }
+      );
 
       // Add the route polyline and the two markers to the map:
-      map.addObject(routeLine);
+      map.addObjects([routeLine,routeArrows]);
 
       // Set the map's viewport to make the whole route visible:
       map.getViewModel().setLookAtData({bounds: routeLine.getBoundingBox()});
@@ -395,15 +412,18 @@ function route() {
           // startIcon
           pointerMarker = new H.map.Marker({lat:sections[i]["departure"]["place"]["location"].lat,lng:sections[i]["departure"]["place"]["location"].lng},{icon: strIcon, volatility: true});
           map.addObject(pointerMarker);
+          pointerMarker.setData("START");
         }else {
           // viaIcon
           pointerMarker = new H.map.Marker({lat:sections[i]["departure"]["place"]["location"].lat,lng:sections[i]["departure"]["place"]["location"].lng},{icon: viaIcon, volatility: true});
           map.addObject(pointerMarker);
+          pointerMarker.setData("VIA");
         }
       } else if(sections[i]["departure"]["place"]["type"]=="chargingStation") {
         // chargingIcon
         pointerMarker = new H.map.Marker({lat:sections[i]["departure"]["place"]["location"].lat,lng:sections[i]["departure"]["place"]["location"].lng},{icon: greenChargeIcon, volatility: true});
         map.addObject(pointerMarker);
+        pointerMarker.setData("Charging Station");
       }
 
       // Arrival:
@@ -412,15 +432,18 @@ function route() {
           // endIcon
           pointerMarker = new H.map.Marker({lat:sections[i]["arrival"]["place"]["location"].lat,lng:sections[i]["arrival"]["place"]["location"].lng},{icon: endIcon, volatility: true});
           map.addObject(pointerMarker);
+          pointerMarker.setData("END");
         }else {
           // viaIcon
           pointerMarker = new H.map.Marker({lat:sections[i]["arrival"]["place"]["location"].lat,lng:sections[i]["arrival"]["place"]["location"].lng},{icon: viaIcon, volatility: true});
           map.addObject(pointerMarker);
+          pointerMarker.setData("VIA");
         }
       } else if(sections[i]["arrival"]["place"]["type"]=="chargingStation"){
         // chargingIcon
         pointerMarker = new H.map.Marker({lat:sections[i]["arrival"]["place"]["location"].lat,lng:sections[i]["departure"]["place"]["location"].lng},{icon: greenChargeIcon, volatility: true});
         map.addObject(pointerMarker);
+        pointerMarker.setData("Charging Station");
       }
     }
   });
