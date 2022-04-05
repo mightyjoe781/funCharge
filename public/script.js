@@ -58,7 +58,6 @@ function getNumber(i) {
     dataType: 'json', // added data type
     async: false,
     success: function (data) {
-      console.log(data);
       if (data['COUNTRY'] == null) {
         msg = `<div class="ui info message" style="margin-top: 0.3vh;">
                       <div class="header">
@@ -376,7 +375,8 @@ let foodIcon = new H.map.Icon('assets/food.png'),
 
 // place recreational 
 function placeRecreations(position) {
-  let req = 'https://browse.search.hereapi.com/v1/browse?at=' + position.lat + ',' + position.lng + '&categories=100-1000,100-1100,300,600&in=circle:' + position.lat + ',' + position.lng + ';r=5000&limit=5&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U';
+  const radius = 10000  // search radius
+  let req = 'https://browse.search.hereapi.com/v1/browse?at=' + position.lat + ',' + position.lng + '&categories=100-1000,100-1100,300,600&in=circle:' + position.lat + ',' + position.lng + ';r=' + radius + '&limit=5&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U';
   $.getJSON(req, (resp) => {
     resp = resp["items"]
     for (let i = 0; i < resp.length; i++) {
@@ -406,6 +406,7 @@ function placeRecreations(position) {
 function route() {
   let req = 'https://router.hereapi.com/v8/routes?departureTime=any&origin=' + str.split(',')[0] + ',' + str.split(',')[1] + '&ev[connectorTypes]=iec62196Type2Combo&transportMode=car&destination=' + end.split(',')[0] + ',' + end.split(',')[1] + '&return=polyline,actions,instructions,summary,routeHandle,passthrough&ev[freeFlowSpeedTable]=0,0.239,27,0.239,45,0.259,60,0.196,75,0.207,90,0.238,100,0.26,110,0.296,120,0.337,130,0.351,250,0.351&ev[trafficSpeedTable]=0,0.349,27,0.319,45,0.329,60,0.266,75,0.287,90,0.318,100,0.33,110,0.335,120,0.35,130,0.36,250,0.36&ev[auxiliaryConsumption]=1.8&ev[ascent]=9&ev[descent]=4.3&ev[makeReachable]=true&ev[initialCharge]=' + batteryLvl + '&ev[maxCharge]=80&ev[chargingCurve]=0,239,32,199,56,167,60,130,64,111,68,83,72,55,76,33,78,17,80,1&ev[maxChargeAfterChargingStation]=72&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U'
   $.getJSON(req, function (data) {
+    console.log(data["routes"])
     // sections from the here routing api
     let sections = data["routes"][0]["sections"];
 
@@ -442,7 +443,8 @@ function route() {
       map.addObjects([routeLine, routeArrows]);
 
       // Set the map's viewport to make the whole route visible:
-      map.getViewModel().setLookAtData({ bounds: routeLine.getBoundingBox() });
+      if (i == 0)
+        map.getViewModel().setLookAtData({ bounds: routeLine.getBoundingBox() });
 
       // Departure:
       if (sections[i]["departure"]["place"]["type"] == "place") {
@@ -490,4 +492,5 @@ function route() {
 
   $('#routeInfoModal').modal('setting', 'transition', 'drop').modal('hide');
   $('#markBtn').removeClass("disabled");
+
 }
