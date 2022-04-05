@@ -51,7 +51,8 @@ var behavior = new H.mapevents.Behavior(mapEvents);
 function getNumber(i) {
   /* numbers */
   var msg;
-  var countryName = i[i.length - 1].slice(1);
+  // var countryName = i[i.length - 1].slice(1);
+  var countryName = i
   $.ajax({
     url: window.location.href + "view/" + countryName,
     type: 'GET',
@@ -99,15 +100,18 @@ var geocoder = platform.getSearchService();
 function revGeocode(lat, lon) {
   var sol = lat + "," + lon;
   let geocodeParam = {
-    at: sol
+    at: sol,
+    lang: 'en-US'
   }
 
   function onResult(result) {
     if (result.items.length > 0) {
-      var x = result.items[0].title;
-      document.getElementById("status").innerHTML = '<h3>' + x + '</h3>';
-      var i = x.split(",");
-      document.getElementById("contacts").innerHTML = getNumber(i);
+      // console.log(result.items[0].address)
+      // console.log(result.items[0].address.countryName)
+      var x = result.items[0].address.countryName;
+      document.getElementById("status").innerHTML = '<h3>' + result.items[0].title + '</h3>';
+      // var i = x.split(",");
+      document.getElementById("contacts").innerHTML = getNumber(x);
     } else if (result.items.length == 0) {
       document.getElementById("status").innerHTML = "<h1>funCharge</h1>";
     }
@@ -217,6 +221,38 @@ ClickListener(map);
 
 var str = "not set";
 var end = "not set";
+
+// Create a style object:
+var circleStyle = {
+
+  strokeColor: 'green',
+  fillColor: 'rgba(66, 245, 126, 0.25)',
+  opacity: 0.5
+
+};
+
+function getBrowserPosition() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+      console.log(position.coords);
+      var browserPosition = { lat: position.coords.latitude, lng: position.coords.longitude };
+      // Create a marker:
+      var icon = new H.map.Icon('assets/gps.png');
+      let marker = new H.map.Marker(browserPosition, { icon: icon });
+      // Instantiate a circle object (using the default style):
+      // console.log(position.coords)
+      placeRecreations(browserPosition, 20)
+      var circle = new H.map.Circle({ lat: position.coords.latitude + 0.015, lng: position.coords.longitude }, 5000, { style: circleStyle });
+      marker.setData("You're here!");
+      // Add the circle to the map:
+      map.addObject(circle);
+      map.setCenter(browserPosition);
+      map.addObject(marker);
+    });
+  } else {
+    alert("Geolocation is not supported by this browser!");
+  }
+}
 
 function setUpClickListener(map) {
   // Attach an event listener to map display
@@ -380,9 +416,10 @@ let foodIcon = new H.map.Icon('assets/food.png'),
   sightsIcon = new H.map.Icon('assets/museums.png');
 
 // place recreational 
-function placeRecreations(position) {
+function placeRecreations(position, limit) {
   const radius = 10000  // search radius
-  let req = 'https://browse.search.hereapi.com/v1/browse?at=' + position.lat + ',' + position.lng + '&categories=100-1000,100-1100,300,600&in=circle:' + position.lat + ',' + position.lng + ';r=' + radius + '&limit=5&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U'; $.getJSON(req, (resp) => {
+  // const limit = limit // limit on results
+  let req = 'https://browse.search.hereapi.com/v1/browse?at=' + position.lat + ',' + position.lng + '&categories=100-1000,100-1100,300,600&in=circle:' + position.lat + ',' + position.lng + ';r=' + radius + '&limit=' + limit + '&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U'; $.getJSON(req, (resp) => {
     resp = resp["items"]
     for (let i = 0; i < resp.length; i++) {
       let pointerMarker
@@ -461,7 +498,7 @@ function route() {
       if (sections[i]["departure"]["place"]["type"] == "place") {
         if (i == 0) {
           // startIcon
-          placeRecreations(sections[i]["departure"]["place"]["location"])
+          placeRecreations(sections[i]["departure"]["place"]["location"], 5)
           pointerMarker = new H.map.Marker({ lat: sections[i]["departure"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng }, { icon: strIcon, volatility: true });
           map.addObject(pointerMarker);
           pointerMarker.setData("START");
@@ -472,7 +509,7 @@ function route() {
           pointerMarker.setData("VIA");
         }
       } else if (sections[i]["departure"]["place"]["type"] == "chargingStation") {
-        placeRecreations(sections[i]["departure"]["place"]["location"])
+        placeRecreations(sections[i]["departure"]["place"]["location"], 5)
         // chargingIcon
         pointerMarker = new H.map.Marker({ lat: sections[i]["departure"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng }, { icon: greenChargeIcon, volatility: true });
         map.addObject(pointerMarker);
@@ -484,7 +521,7 @@ function route() {
       if (sections[i]["arrival"]["place"]["type"] == "place") {
         if (i == sections.length - 1) {
           // endIcon
-          placeRecreations(sections[i]["arrival"]["place"]["location"])
+          placeRecreations(sections[i]["arrival"]["place"]["location"], 5)
           pointerMarker = new H.map.Marker({ lat: sections[i]["arrival"]["place"]["location"].lat, lng: sections[i]["arrival"]["place"]["location"].lng }, { icon: endIcon, volatility: true });
           map.addObject(pointerMarker);
           pointerMarker.setData("END");
@@ -495,7 +532,7 @@ function route() {
           pointerMarker.setData("VIA");
         }
       } else if (sections[i]["arrival"]["place"]["type"] == "chargingStation") {
-        placeRecreations(sections[i]["arrival"]["place"]["location"])
+        placeRecreations(sections[i]["arrival"]["place"]["location"], 5)
         // chargingIcon
         pointerMarker = new H.map.Marker({ lat: sections[i]["arrival"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng }, { icon: nonGreenChargeIcons[Math.floor(Math.random() * nonGreenChargeIcons.length)], volatility: true });
         map.addObject(pointerMarker);
