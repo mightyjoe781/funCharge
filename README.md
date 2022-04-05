@@ -2,16 +2,18 @@
 
 <p align="center"><img src="https://github.com/mightyjoe781/funCharge/blob/main/public/assets/funCharge_nobg.png" width = "25%" height = "25%"></p>
 
-An Electrical Vehicle Charging Stations routing and Recreational App which identifies and predicts fun activities in nearby location of charging stations based on current charge, source and destination location.
+<b>funCharge</b> is an interactive and responsive web application which makes it fun for EV owners to charge their vehicles. The application uses various APIs to provide most efficient route, while listing and ranking options of charging stations and recreational activities that commuters can meanwhile engage in, emergency contacts to keep them safe, etc.
 
 ## Contents
 
 1. [Short description](#short-description)
 2. [Demo video](#demo-video)
-3. [Architecture](#architecture)
-4. [Live demo](#live-demo)
-5. [Built with](#built-with)
-6. [License](#license)
+3. [Medium Article](#medium-article)
+4. [Architecture](#architecture)
+5. [Live demo](#live-demo)
+6. [Built with](#built-with)
+7. [Authors](#authors)
+8. [License](#license)
 
 ## Short Description
 
@@ -29,7 +31,11 @@ funCharge directly traces trajectory and possible charging station you can reach
 
 ## Demo Video
 
+[Video]()
 
+## Medium Article
+
+[Medium]()
 
 ## Architecture
 
@@ -38,7 +44,6 @@ funCharge directly traces trajectory and possible charging station you can reach
 3. Heroku executes nodeJS to render the website
 4. HERE Map API (funCharge) sends information about distances and routing along with locations nearby which are critical to optimal decisions.
 5. Custom Helpline API : implemented using sqlite3, API strictly follows CRUD principles and provides various helplines based on country name.
-
 
 ## Live Demo
 
@@ -55,6 +60,12 @@ You can find a running system to test at [funcharge.herokuapp.com](https://funch
 * [PushBot](https://pushbots.com/) - Notifications
 * [Semantic UI](https://semantic-ui.com/) - Frontend Components and UI/UX Design
 * [sqlite3](https://www.sqlite.org/) - Helpline API design
+
+## Authors
+
+* **Sudhanshu** - [mightyjoe781](https://github.com/mightyjoe781)
+* **Prashant** - [pjflux2001](https://github.com/pjflux2001)
+* **Apoorv** - [ApEdu](https://github.com/ApEdu)
 
 ## License
 
