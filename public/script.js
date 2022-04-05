@@ -53,24 +53,24 @@ function getNumber(i) {
   var msg;
   var countryName = i[i.length - 1].slice(1);
   $.ajax({
-      url: window.location.href+"view/"+countryName,
-      type: 'GET',
-      dataType: 'json', // added data type
-      async : false,
-      success: function(data) {
-          console.log(data);
-          if(data['COUNTRY']==null){
-            msg = `<div class="ui info message" style="margin-top: 0.3vh;">
+    url: window.location.href + "view/" + countryName,
+    type: 'GET',
+    dataType: 'json', // added data type
+    async: false,
+    success: function (data) {
+      console.log(data);
+      if (data['COUNTRY'] == null) {
+        msg = `<div class="ui info message" style="margin-top: 0.3vh;">
                       <div class="header">
                           Not Available for this region, please click somewhere else
                       </div>
                   Click <a href="https://www.adducation.info/general-knowledge-travel-and-transport/emergency-numbers/"><b>here</b></a> for countrywise list of emergency numbers
                   </div>`
-          } else {
-            var printer = ["COUNTRY","CALLCODES","EMERGENCY","POLICE","AMBULANCE","FIRE"];
-            msg = `<div class="ui six tiny horizontal statistics">`;
-            printer.forEach(field => {
-              msg = msg + `<div class="statistic">
+      } else {
+        var printer = ["COUNTRY", "CALLCODES", "EMERGENCY", "POLICE", "AMBULANCE", "FIRE"];
+        msg = `<div class="ui six tiny horizontal statistics">`;
+        printer.forEach(field => {
+          msg = msg + `<div class="statistic">
                   <div class="value">
                   ${emptlyValueNumbers(data[field])}
                   </div>
@@ -78,10 +78,10 @@ function getNumber(i) {
                     ${field}
                   </div>
                 </div>`
-            });
-            msg += `</div>`;
-         }
+        });
+        msg += `</div>`;
       }
+    }
   });
   return msg;
 }
@@ -211,7 +211,7 @@ function ClickListener(map) {
   // Attach an event listener to map display
   // obtain the coordinates and display in an alert box.
   map.addEventListener('tap', globalFncTap);
-  
+
 }
 
 ClickListener(map);
@@ -269,121 +269,158 @@ function setUpClickListener(map) {
 
 }
 
-function clickToMark(){
+function clickToMark() {
   // Add event listener:
-  map.addEventListener('longpress', function(evt) {
-      if(evt.target instanceof H.map.Marker){
-          //bubble
-          // Create an info bubble object at a specific geographic location:
-          var bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
-          content: evt.target.getData()
-   });
-          // Add info bubble to the UI:
-          ui.addBubble(bubble);
+  map.addEventListener('longpress', function (evt) {
+    if (evt.target instanceof H.map.Marker) {
+      //bubble
+      // Create an info bubble object at a specific geographic location:
+      var bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
+        content: evt.target.getData()
+      });
+      // Add info bubble to the UI:
+      ui.addBubble(bubble);
+    }
+    else {
+      // Log 'tap' and 'mouse' events:
+      var cnt = 0;
+      console.log(evt); // too much data here (try to minify)
+      let pointer = evt.currentPointer;
+      let imgIcon = new H.map.Icon('assets/robot.png');
+      let pointerPoistion = map.screenToGeo(pointer.viewportX, pointer.viewportY);
+      let pointerMarker = new H.map.Marker(pointerPoistion, { icon: imgIcon, volatility: true });
+      pointerMarker.draggable = true;
+      if (cnt == 0) {
+        var userData = prompt("Enter some data for this pointer:");
+        pointerMarker.setData(userData);
+        console.log("Pointer added!");
+      } else {
+        pointerMarker.getData();
       }
-      else{
-          // Log 'tap' and 'mouse' events:
-          var cnt =0;
-          console.log(evt); // too much data here (try to minify)
-          let pointer = evt.currentPointer;
-          let imgIcon = new H.map.Icon('assets/robot.png');
-          let pointerPoistion = map.screenToGeo(pointer.viewportX, pointer.viewportY);
-          let pointerMarker = new H.map.Marker(pointerPoistion,{icon: imgIcon, volatility: true});
-          pointerMarker.draggable = true;
-          if(cnt == 0){
-              var userData = prompt("Enter some data for this pointer:");
-              pointerMarker.setData(userData);
-              console.log("Pointer added!");
-          }else{
-              pointerMarker.getData();
-          }
-                 
-          map.addObject(pointerMarker);
-      }
+
+      map.addObject(pointerMarker);
+    }
   });
 }
 
 clickToMark();
 
-function clickDragMarkers(){
+function clickDragMarkers() {
   // disable the default draggability of the underlying map
   // and calculate the offset between mouse and target's position
   // when starting to drag a marker object:
-  map.addEventListener('dragstart', function(ev) {
-      var target = ev.target,
-          pointer = ev.currentPointer;
-      if (target instanceof H.map.Marker) {
+  map.addEventListener('dragstart', function (ev) {
+    var target = ev.target,
+      pointer = ev.currentPointer;
+    if (target instanceof H.map.Marker) {
       var targetPosition = map.geoToScreen(target.getGeometry());
       target['offset'] = new H.math.Point(pointer.viewportX - targetPosition.x, pointer.viewportY - targetPosition.y);
       behavior.disable();
-      }
+    }
   }, false);
   // re-enable the default draggability of the underlying map
   // when dragging has completed
-  map.addEventListener('dragend', function(ev) {
-      var target = ev.target;
-      if (target instanceof H.map.Marker) {
-        
-          
+  map.addEventListener('dragend', function (ev) {
+    var target = ev.target;
+    if (target instanceof H.map.Marker) {
+
+
       behavior.enable();
-      }
+    }
   }, false);
   // Listen to the drag event and move the position of the marker
   // as necessary
-  map.addEventListener('drag', function(ev) {
-      var target = ev.target,
-          pointer = ev.currentPointer;
-      if (target instanceof H.map.Marker) {
+  map.addEventListener('drag', function (ev) {
+    var target = ev.target,
+      pointer = ev.currentPointer;
+    if (target instanceof H.map.Marker) {
       target.setGeometry(map.screenToGeo(pointer.viewportX - target['offset'].x, pointer.viewportY - target['offset'].y));
-      }
+    }
   }, false);
 }
 
 clickDragMarkers();
 
 function distance(lat1, lon1, lat2, lon2, unit) {
-	if ((lat1 == lat2) && (lon1 == lon2)) {
-		return 0;
-	}
-	else {
-		var radlat1 = Math.PI * lat1/180;
-		var radlat2 = Math.PI * lat2/180;
-		var theta = lon1-lon2;
-		var radtheta = Math.PI * theta/180;
-		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-		if (dist > 1) {
-			dist = 1;
-		}
-		dist = Math.acos(dist);
-		dist = dist * 180/Math.PI;
-		dist = dist * 60 * 1.1515;
-		if (unit=="K") { dist = dist * 1.609344 }
-		if (unit=="N") { dist = dist * 0.8684 }
-		return dist;
-	}
+  if ((lat1 == lat2) && (lon1 == lon2)) {
+    return 0;
+  }
+  else {
+    var radlat1 = Math.PI * lat1 / 180;
+    var radlat2 = Math.PI * lat2 / 180;
+    var theta = lon1 - lon2;
+    var radtheta = Math.PI * theta / 180;
+    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    if (dist > 1) {
+      dist = 1;
+    }
+    dist = Math.acos(dist);
+    dist = dist * 180 / Math.PI;
+    dist = dist * 60 * 1.1515;
+    if (unit == "K") { dist = dist * 1.609344 }
+    if (unit == "N") { dist = dist * 0.8684 }
+    return dist;
+  }
 }
 
+// get map markers
+let redChargeIcon = new H.map.Icon('assets/redPump.png'),
+  greenChargeIcon = new H.map.Icon('assets/greenPump.png'),
+  orangeChargeIcon = new H.map.Icon('assets/orangePump.png'),
+  strIcon = new H.map.Icon('assets/start.png'),
+  viaIcon = new H.map.Icon('assets/via.png')
+endIcon = new H.map.Icon('assets/end.png');
+let foodIcon = new H.map.Icon('assets/food.png'),
+  shopIcon = new H.map.Icon('assets/shop.png'),
+  sightsIcon = new H.map.Icon('assets/museums.png');
+
+// place recreational 
+function placeRecreations(position) {
+  let req = 'https://browse.search.hereapi.com/v1/browse?at=' + position.lat + ',' + position.lng + '&categories=100-1000,100-1100,300,600&in=circle:' + position.lat + ',' + position.lng + ';r=5000&limit=5&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U';
+  $.getJSON(req, (resp) => {
+    resp = resp["items"]
+    for (let i = 0; i < resp.length; i++) {
+      let pointerMarker
+      category = resp[i]["categories"][0]["id"].split("-")[0];
+      console.log(category, resp[i]["title"])
+      // find apt map marker icon
+      switch (category) {
+        case '100':
+          pointerMarker = new H.map.Marker({ lat: resp[i]["position"]["lat"], lng: resp[i]["position"]["lng"] }, { icon: foodIcon, volatility: true });
+          break;
+        case '300':
+          pointerMarker = new H.map.Marker({ lat: resp[i]["position"]["lat"], lng: resp[i]["position"]["lng"] }, { icon: shopIcon, volatility: true });
+          break;
+        case '600':
+          pointerMarker = new H.map.Marker({ lat: resp[i]["position"]["lat"], lng: resp[i]["position"]["lng"] }, { icon: sightsIcon, volatility: true });
+          break;
+      }
+      // add to map
+      map.addObject(pointerMarker)
+      pointerMarker.setData(resp[i]["title"])
+    }
+  });
+}
+
+
 function route() {
-  $.getJSON('https://router.hereapi.com/v8/routes?departureTime=any&origin='+str.split(',')[0]+','+str.split(',')[1]+'&ev[connectorTypes]=iec62196Type2Combo&transportMode=car&destination='+end.split(',')[0]+','+end.split(',')[1]+'&return=polyline,actions,instructions,summary,routeHandle,passthrough&ev[freeFlowSpeedTable]=0,0.239,27,0.239,45,0.259,60,0.196,75,0.207,90,0.238,100,0.26,110,0.296,120,0.337,130,0.351,250,0.351&ev[trafficSpeedTable]=0,0.349,27,0.319,45,0.329,60,0.266,75,0.287,90,0.318,100,0.33,110,0.335,120,0.35,130,0.36,250,0.36&ev[auxiliaryConsumption]=1.8&ev[ascent]=9&ev[descent]=4.3&ev[makeReachable]=true&ev[initialCharge]=48&ev[maxCharge]=80&ev[chargingCurve]=0,239,32,199,56,167,60,130,64,111,68,83,72,55,76,33,78,17,80,1&ev[maxChargeAfterChargingStation]=72&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U', function(data){
+  let req = 'https://router.hereapi.com/v8/routes?departureTime=any&origin=' + str.split(',')[0] + ',' + str.split(',')[1] + '&ev[connectorTypes]=iec62196Type2Combo&transportMode=car&destination=' + end.split(',')[0] + ',' + end.split(',')[1] + '&return=polyline,actions,instructions,summary,routeHandle,passthrough&ev[freeFlowSpeedTable]=0,0.239,27,0.239,45,0.259,60,0.196,75,0.207,90,0.238,100,0.26,110,0.296,120,0.337,130,0.351,250,0.351&ev[trafficSpeedTable]=0,0.349,27,0.319,45,0.329,60,0.266,75,0.287,90,0.318,100,0.33,110,0.335,120,0.35,130,0.36,250,0.36&ev[auxiliaryConsumption]=1.8&ev[ascent]=9&ev[descent]=4.3&ev[makeReachable]=true&ev[initialCharge]=' + batteryLvl + '&ev[maxCharge]=80&ev[chargingCurve]=0,239,32,199,56,167,60,130,64,111,68,83,72,55,76,33,78,17,80,1&ev[maxChargeAfterChargingStation]=72&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U'
+  $.getJSON(req, function (data) {
+    // sections from the here routing api
     let sections = data["routes"][0]["sections"];
-    let redChargeIcon = new H.map.Icon('assets/1.png'),
-        greenChargeIcon = new H.map.Icon('assets/2.png'),
-        orangeChargeIcon = new H.map.Icon('assets/3.png'),
-        strIcon = new H.map.Icon('assets/start.png'),
-        viaIcon = new H.map.Icon('assets/via.png')
-        endIcon = new H.map.Icon('assets/end.png');
+
     let pointerMarker;
-    for(let i = 0; i < sections.length; i++) {
+    for (let i = 0; i < sections.length; i++) {
       // Routes:
       // Create a linestring to use as a point source for the route line
       let linestring = H.geo.LineString.fromFlexiblePolyline(sections[i]["polyline"]);
 
-      colors = ["#9400D3","#f461c3","#8B4513","#000000"]
+      colors = ["#9400D3", "#f461c3", "#8B4513", "#000000"]
       // Create an outline for the route polyline:
       let routeLine = new H.map.Polyline(linestring, {
         style: {
           lineWidth: 10,
-          strokeColor: colors[Math.floor(Math.random()*colors.length)],
+          strokeColor: colors[Math.floor(Math.random() * colors.length)],
           lineTailCap: 'arrow-tail',
           lineHeadCap: 'arrow-head'
         }
@@ -392,61 +429,65 @@ function route() {
       let routeArrows = new H.map.Polyline(linestring, {
         style: {
           lineWidth: 10,
-          fillColor: colors[Math.floor(Math.random()*colors.length)],
+          fillColor: colors[Math.floor(Math.random() * colors.length)],
           strokeColor: 'rgb(255, 255, 255)',
           lineDash: [0, 2],
           lineTailCap: 'arrow-tail',
-          lineHeadCap: 'arrow-head' }
+          lineHeadCap: 'arrow-head'
         }
+      }
       );
 
       // Add the route polyline and the two markers to the map:
-      map.addObjects([routeLine,routeArrows]);
+      map.addObjects([routeLine, routeArrows]);
 
       // Set the map's viewport to make the whole route visible:
-      map.getViewModel().setLookAtData({bounds: routeLine.getBoundingBox()});
+      map.getViewModel().setLookAtData({ bounds: routeLine.getBoundingBox() });
 
       // Departure:
-      if(sections[i]["departure"]["place"]["type"]=="place") {
-        if(i==0) {
+      if (sections[i]["departure"]["place"]["type"] == "place") {
+        if (i == 0) {
           // startIcon
-          pointerMarker = new H.map.Marker({lat:sections[i]["departure"]["place"]["location"].lat,lng:sections[i]["departure"]["place"]["location"].lng},{icon: strIcon, volatility: true});
+          pointerMarker = new H.map.Marker({ lat: sections[i]["departure"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng }, { icon: strIcon, volatility: true });
           map.addObject(pointerMarker);
           pointerMarker.setData("START");
-        }else {
+        } else {
           // viaIcon
-          pointerMarker = new H.map.Marker({lat:sections[i]["departure"]["place"]["location"].lat,lng:sections[i]["departure"]["place"]["location"].lng},{icon: viaIcon, volatility: true});
+          pointerMarker = new H.map.Marker({ lat: sections[i]["departure"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng }, { icon: viaIcon, volatility: true });
           map.addObject(pointerMarker);
           pointerMarker.setData("VIA");
         }
-      } else if(sections[i]["departure"]["place"]["type"]=="chargingStation") {
+      } else if (sections[i]["departure"]["place"]["type"] == "chargingStation") {
+        placeRecreations(sections[i]["departure"]["place"]["location"])
         // chargingIcon
-        pointerMarker = new H.map.Marker({lat:sections[i]["departure"]["place"]["location"].lat,lng:sections[i]["departure"]["place"]["location"].lng},{icon: greenChargeIcon, volatility: true});
+        pointerMarker = new H.map.Marker({ lat: sections[i]["departure"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng }, { icon: greenChargeIcon, volatility: true });
         map.addObject(pointerMarker);
         pointerMarker.setData("Charging Station");
       }
 
       // Arrival:
-      if(sections[i]["arrival"]["place"]["type"]=="place") {
-        if(i==sections.length-1) {
+      if (sections[i]["arrival"]["place"]["type"] == "place") {
+        if (i == sections.length - 1) {
           // endIcon
-          pointerMarker = new H.map.Marker({lat:sections[i]["arrival"]["place"]["location"].lat,lng:sections[i]["arrival"]["place"]["location"].lng},{icon: endIcon, volatility: true});
+          pointerMarker = new H.map.Marker({ lat: sections[i]["arrival"]["place"]["location"].lat, lng: sections[i]["arrival"]["place"]["location"].lng }, { icon: endIcon, volatility: true });
           map.addObject(pointerMarker);
           pointerMarker.setData("END");
-        }else {
+        } else {
           // viaIcon
-          pointerMarker = new H.map.Marker({lat:sections[i]["arrival"]["place"]["location"].lat,lng:sections[i]["arrival"]["place"]["location"].lng},{icon: viaIcon, volatility: true});
+          pointerMarker = new H.map.Marker({ lat: sections[i]["arrival"]["place"]["location"].lat, lng: sections[i]["arrival"]["place"]["location"].lng }, { icon: viaIcon, volatility: true });
           map.addObject(pointerMarker);
           pointerMarker.setData("VIA");
         }
-      } else if(sections[i]["arrival"]["place"]["type"]=="chargingStation"){
+      } else if (sections[i]["arrival"]["place"]["type"] == "chargingStation") {
+        placeRecreations(sections[i]["arrival"]["place"]["location"])
         // chargingIcon
-        pointerMarker = new H.map.Marker({lat:sections[i]["arrival"]["place"]["location"].lat,lng:sections[i]["departure"]["place"]["location"].lng},{icon: greenChargeIcon, volatility: true});
+        pointerMarker = new H.map.Marker({ lat: sections[i]["arrival"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng }, { icon: greenChargeIcon, volatility: true });
         map.addObject(pointerMarker);
         pointerMarker.setData("Charging Station");
       }
     }
   });
+
   $('#routeInfoModal').modal('setting', 'transition', 'drop').modal('hide');
   $('#markBtn').removeClass("disabled");
 }
