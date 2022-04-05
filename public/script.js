@@ -385,6 +385,8 @@ function placeRecreations(position) {
       console.log(category, resp[i]["title"])
       // find apt map marker icon
       switch (category) {
+        case '550':
+          pointerMarker = new H.map.Marker({ lat: resp[i]["position"]["lat"], lng: resp[i]["position"]["lng"] }, { icon: sightsIcon, volatility: true });
         case '100':
           pointerMarker = new H.map.Marker({ lat: resp[i]["position"]["lat"], lng: resp[i]["position"]["lng"] }, { icon: foodIcon, volatility: true });
           break;
@@ -404,7 +406,7 @@ function placeRecreations(position) {
 
 
 function route() {
-  let req = 'https://router.hereapi.com/v8/routes?departureTime=any&origin=' + str.split(',')[0] + ',' + str.split(',')[1] + '&ev[connectorTypes]=iec62196Type2Combo&transportMode=car&destination=' + end.split(',')[0] + ',' + end.split(',')[1] + '&return=polyline,actions,instructions,summary,routeHandle,passthrough&ev[freeFlowSpeedTable]=0,0.239,27,0.239,45,0.259,60,0.196,75,0.207,90,0.238,100,0.26,110,0.296,120,0.337,130,0.351,250,0.351&ev[trafficSpeedTable]=0,0.349,27,0.319,45,0.329,60,0.266,75,0.287,90,0.318,100,0.33,110,0.335,120,0.35,130,0.36,250,0.36&ev[auxiliaryConsumption]=1.8&ev[ascent]=9&ev[descent]=4.3&ev[makeReachable]=true&ev[initialCharge]=' + batteryLvl + '&ev[maxCharge]=80&ev[chargingCurve]=0,239,32,199,56,167,60,130,64,111,68,83,72,55,76,33,78,17,80,1&ev[maxChargeAfterChargingStation]=72&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U'
+  let req = 'https://router.hereapi.com/v8/routes?departureTime=any&origin=' + str.split(',')[0] + ',' + str.split(',')[1] + '&ev[connectorTypes]=iec62196Type2Combo&transportMode=car&destination=' + end.split(',')[0] + ',' + end.split(',')[1] + '&return=polyline,actions,instructions,summary,routeHandle,passthrough&ev[freeFlowSpeedTable]=0,0.239,27,0.239,45,0.259,60,0.196,75,0.207,90,0.238,100,0.26,110,0.296,120,0.337,130,0.351,250,0.351&ev[trafficSpeedTable]=0,0.349,27,0.319,45,0.329,60,0.266,75,0.287,90,0.318,100,0.33,110,0.335,120,0.35,130,0.36,250,0.36&ev[auxiliaryConsumption]=1.8&ev[ascent]=9&ev[descent]=4.3&ev[makeReachable]=true&ev[initialCharge]=' + batteryLvl + '&ev[maxCharge]=100&ev[chargingCurve]=0,239,32,199,56,167,60,130,64,111,68,83,72,55,76,33,78,17,80,1&ev[maxChargeAfterChargingStation]=72&apiKey=IEt8dt3NQy3h3phRpCJ_XxK_rcmpHjSlsSZ0GlfBT8U'
   $.getJSON(req, function (data) {
     console.log(data["routes"])
     // sections from the here routing api
@@ -450,6 +452,7 @@ function route() {
       if (sections[i]["departure"]["place"]["type"] == "place") {
         if (i == 0) {
           // startIcon
+          placeRecreations(sections[i]["departure"]["place"]["location"])
           pointerMarker = new H.map.Marker({ lat: sections[i]["departure"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng }, { icon: strIcon, volatility: true });
           map.addObject(pointerMarker);
           pointerMarker.setData("START");
@@ -471,6 +474,7 @@ function route() {
       if (sections[i]["arrival"]["place"]["type"] == "place") {
         if (i == sections.length - 1) {
           // endIcon
+          placeRecreations(sections[i]["arrival"]["place"]["location"])
           pointerMarker = new H.map.Marker({ lat: sections[i]["arrival"]["place"]["location"].lat, lng: sections[i]["arrival"]["place"]["location"].lng }, { icon: endIcon, volatility: true });
           map.addObject(pointerMarker);
           pointerMarker.setData("END");
