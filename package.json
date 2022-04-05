@@ -2,21 +2,22 @@
   "name": "funcharge",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "worker": "node app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pjflux2001/funCharge.git"
+    "url": "git+https://github.com/mightyjoe781/funCharge.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/pjflux2001/funCharge/issues"
+    "url": "https://github.com/mightyjoe781/funCharge/issues"
   },
-  "homepage": "https://github.com/pjflux2001/funCharge#readme",
+  "homepage": "https://github.com/mightyjoe781/funCharge#readme",
   "dependencies": {
     "ejs": "^3.1.6",
     "express": "^4.17.3",
