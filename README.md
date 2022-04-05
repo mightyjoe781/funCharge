@@ -2,6 +2,8 @@
 
 <p align="center"><img src="https://github.com/mightyjoe781/funCharge/blob/main/public/assets/funCharge_nobg.png" width = "25%" height = "25%"></p>
 
+[![License](https://img.shields.io/badge/license-BSD-green.svg)](https://github.com/mightyjoe781/funCharge/blob/main/LICENSE) [![Website](https://img.shields.io/badge/View-Website-blue)](https://funcharge.herokuapp.com/)
+
 <b>funCharge</b> is an interactive and responsive web application which makes it fun for EV owners to charge their vehicles. The application uses various APIs to provide most efficient route, while listing and ranking options of charging stations and recreational activities that commuters can meanwhile engage in, emergency contacts to keep them safe, etc.
 
 ## Contents
@@ -64,8 +66,8 @@ You can find a running system to test at [funcharge.herokuapp.com](https://funch
 ## Authors
 
 * **Sudhanshu** - [mightyjoe781](https://github.com/mightyjoe781)
-* **Prashant** - [pjflux2001](https://github.com/pjflux2001)
 * **Apoorv** - [ApEdu](https://github.com/ApEdu)
+* **Prashant** - [pjflux2001](https://github.com/pjflux2001)
 
 ## License
 
