@@ -234,7 +234,7 @@ var circleStyle = {
 function getBrowserPosition() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
-      console.log(position.coords);
+      // console.log(position.coords);
       var browserPosition = { lat: position.coords.latitude, lng: position.coords.longitude };
       // Create a marker:
       var icon = new H.map.Icon('assets/gps.png');
@@ -424,7 +424,6 @@ function placeRecreations(position, limit) {
     for (let i = 0; i < resp.length; i++) {
       let pointerMarker
       category = resp[i]["categories"][0]["id"].split("-")[0];
-      console.log(category, resp[i]["title"])
       // find apt map marker icon
       switch (category) {
         case '550':
@@ -439,9 +438,11 @@ function placeRecreations(position, limit) {
           pointerMarker = new H.map.Marker({ lat: resp[i]["position"]["lat"], lng: resp[i]["position"]["lng"] }, { icon: sightsIcon, volatility: true });
           break;
       }
-      // add to map
-      map.addObject(pointerMarker)
-      pointerMarker.setData(resp[i]["title"])
+      if(pointerMarker){
+        // add to map
+        map.addObject(pointerMarker)
+        pointerMarker.setData(resp[i]["title"])
+      }
     }
   });
 }
@@ -493,7 +494,7 @@ function route() {
       if (i == 0)
         map.getViewModel().setLookAtData({ bounds: routeLine.getBoundingBox() });
 
-      console.log(sections[i]["departure"]["place"]["type"], " Departure : ", { lat: sections[i]["departure"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng })
+      // console.log(sections[i]["departure"]["place"]["type"], " Departure : ", { lat: sections[i]["departure"]["place"]["location"].lat, lng: sections[i]["departure"]["place"]["location"].lng })
       // Departure:
       if (sections[i]["departure"]["place"]["type"] == "place") {
         if (i == 0) {
@@ -516,7 +517,7 @@ function route() {
         pointerMarker.setData("Charging Station");
       }
 
-      console.log(sections[i]["arrival"]["place"]["type"], " Arrival : ", { lat: sections[i]["arrival"]["place"]["location"].lat, lng: sections[i]["arrival"]["place"]["location"].lng })
+      // console.log(sections[i]["arrival"]["place"]["type"], " Arrival : ", { lat: sections[i]["arrival"]["place"]["location"].lat, lng: sections[i]["arrival"]["place"]["location"].lng })
       // Arrival:
       if (sections[i]["arrival"]["place"]["type"] == "place") {
         if (i == sections.length - 1) {
@@ -539,7 +540,7 @@ function route() {
         pointerMarker.setData("Charging Station");
       }
     }
-    console.log(duration, length, consumption)
+    // console.log(duration, length, consumption)
     document.getElementById("status").innerHTML = "<h4>Routing done!</h4>"
     document.getElementById("routeStats").style.display = 'initial'
     document.getElementById("totalDuration").innerHTML = (duration / 3600).toFixed(2) + " hrs"
