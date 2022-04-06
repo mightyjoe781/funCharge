@@ -37,7 +37,7 @@ funCharge directly traces trajectory and possible charging station you can reach
 
 ## Medium Article
 
-[Medium]()
+[Medium](https://medium.com/@f20180332/funcharge-8fd4eb81b683)
 
 ## Architecture
 
