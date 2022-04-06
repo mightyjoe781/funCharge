@@ -53,6 +53,7 @@ You can find a running system to test at [funcharge.herokuapp.com](https://funch
 
 ## Built With
 
+* [Postman](https://www.postman.com/) - API Testing
 * [IBM Watson](https://www.ibm.com/in-en/watson) - Chat Assistant : funCharge Bot
 * [HERE Maps API](https://developer.here.com/) - HERE Map API for Tracking Routes
 * [nodeJS](https://nodejs.org/en/) - Server Runtime Environment
