@@ -30,7 +30,7 @@ var dbdir    = './database'                 ;
 var dbfile   = 'helpline.db'                ;
 var dbpath   = dbdir + '/' + dbfile         ;
 
-var port     = process.env.PORT || 3033     ;
+var port     = process.env.PORT || 8080     ;
 var hostname = '0.0.0.0'                    ;
 
 //--------------------------------------------------------------------
@@ -42,7 +42,7 @@ var app     = express()                     ;
 //### How is error here handled?
 //### What creates the subdir?
 //###
-var db = new sqlite3.Database (dbpath)          ; 
+var db = new sqlite3.Database (dbpath)          ;
 app.set("view engine","ejs")                    ;
 app.use(express.static(__dirname + '/public'))  ;
 
@@ -70,7 +70,7 @@ function HandleResult (err, str_op_type) {
 //--------------------------------------------------------------------
 // HomePage
 
-app.get("/",function(req,res){
+app.get("/",function(_,res){
 	res.render("home.ejs");
 });
 
@@ -141,7 +141,7 @@ app.get ('/allhelp', function (req, res) {
 
 //--------------------------------------------------------------------
 // Fallback Request.
-app.get("*", (req,res) => {
+app.get("*", (_,res) => {
     res.render("404.ejs");
 });
 
